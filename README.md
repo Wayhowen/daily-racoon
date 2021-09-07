@@ -1,1 +1,1 @@
-daily-racoon
+A mini-project meant to allow for obtaining daily (or more often) racoon pictures easily.
