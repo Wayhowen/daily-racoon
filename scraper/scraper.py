@@ -1,4 +1,5 @@
 import json
+import re
 
 import pytumblr as pytumblr
 
@@ -15,4 +16,14 @@ class Scraper:
         )
 
     def scrape(self):
-        print(self._tumblr_client.info())
+        data = self._tumblr_client.posts('dailyraccoons.tumblr.com', limit=50, type="photo")
+        for post in data["posts"]:
+            self._choose_method(post)
+
+    def _choose_method(self, data):
+        if data["type"] == "text":
+            res = re.search(r'img src=".*?\"', data["body"])
+            if res:
+                print(res.group(0))
+            else:
+                print(data)
