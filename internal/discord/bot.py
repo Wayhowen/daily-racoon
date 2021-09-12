@@ -6,7 +6,6 @@ from typing import Callable, Any
 from discord.ext import commands, tasks
 from discord.ext.commands import Command, Context
 
-from internal.settings.default import CHANNEL_MAP, DISCORD_BOT_TOKEN
 
 
 class DiscordBot(commands.Bot):
@@ -19,23 +18,23 @@ class DiscordBot(commands.Bot):
         self._bot_background_thread = Thread(
             target=self.run, args=(bot_token,), name='bot-thread', daemon=True)
 
-    async def on_ready(self):
-        entry_message = f"{self.user} connected to {self.guilds[0]}"
-        print(entry_message)
-        await self.write_to_channel("logs", entry_message)
+    # async def on_ready(self):
+    #     entry_message = f"{self.user} connected to {self.guilds[0]}"
+    #     print(entry_message)
+    #     await self.write_to_channel("logs", entry_message)
 
     async def write_to_channel(self, channel_name: str, message: str):
         await self.wait_until_ready()
         channel = self.get_channel(id=self._channels_map[channel_name])
         await channel.send(message)
 
-    # TODO: add proper logging
-    async def on_error(self, event, *args, **kwargs):
-        error = f"During execution of an '{event}', the following happened : {args[0]}\n " \
-                f"Traceback: {sys.exc_info()}"
-        print(error)
-        channel = self.get_channel(id=self._channels_map["logs"])
-        await channel.send(error)
+    # # TODO: add proper logging
+    # async def on_error(self, event, *args, **kwargs):
+    #     error = f"During execution of an '{event}', the following happened : {args[0]}\n " \
+    #             f"Traceback: {sys.exc_info()}"
+    #     print(error)
+    #     channel = self.get_channel(id=self._channels_map["logs"])
+    #     await channel.send(error)
 
     def add_looping_task(self, task_name: str, interval_seconds: int,
                          asynchronous_callback: Callable):
