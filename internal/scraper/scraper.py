@@ -15,15 +15,21 @@ class Scraper:
             api_keys["OAuthSecret"]
         )
 
-    def scrape(self):
+    def get_raccoon_picture_urls(self):
+        picture_urls = []
         data = self._tumblr_client.posts('dailyraccoons.tumblr.com', limit=50, type="photo")
         for post in data["posts"]:
-            self._choose_method(post)
+            picture_urls.append(self._extract_racoon_picture_url(post))
+        return picture_urls
 
-    def _choose_method(self, data):
+
+    def _extract_racoon_picture_url(self, data):
         if data["type"] == "text":
-            res = re.search(r'img src=".*?\"', data["body"])
+            res = re.search(r'(http)?s?:?(//[^"\']*\.(?:png|jpg|jpeg|gif|png|svg))', data["body"])
             if res:
-                print(res.group(0))
-            else:
-                print(data)
+                pic_link = res.group(0)
+        elif data["type"] == "photo":
+            pic_link = data["photos"][0]["original_size"]["url"]
+        else:
+            pic_link = None
+        return pic_link
