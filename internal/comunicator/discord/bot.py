@@ -1,4 +1,3 @@
-import sys
 from functools import partial
 from threading import Thread
 from typing import Callable, Any
@@ -7,8 +6,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Command, Context
 
 
-
-class DiscordBot(commands.Bot):
+class Communicator(commands.Bot):
     def __init__(self, command_prefix, listen_to_self, channels_map, bot_token):
         commands.Bot.__init__(self, command_prefix=command_prefix, self_bot=listen_to_self)
 
@@ -72,8 +70,8 @@ if __name__ == '__main__':
     async def stop_looping(context):
         context.bot.stop_looping_task("loopin task")
 
-    bot = DiscordBot(command_prefix="!", listen_to_self=False, channels_map=CHANNEL_MAP,
-                     bot_token=DISCORD_BOT_TOKEN)
+    bot = Communicator(command_prefix="!", listen_to_self=False, channels_map=CHANNEL_MAP,
+                       bot_token=DISCORD_BOT_TOKEN)
     bot.add_new_command("test", test)
     bot.add_looping_task("loopin task", 10, partial(test_loopin, bot))
     bot.add_new_command("stop_loopin", stop_looping)

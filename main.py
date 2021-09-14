@@ -5,6 +5,7 @@ from internal.configs.default import TUMBLR_KEYS_LOCATION, DISCORD_TOKEN_LOCATIO
 from internal.discord.bot import DiscordBot
 from internal.scraper.scraper import Scraper
 
+
 class TempMain:
     def __init__(self):
         self._raccoon_picture_urls = []
