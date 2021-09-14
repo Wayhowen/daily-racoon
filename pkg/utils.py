@@ -1,0 +1,14 @@
+import json
+
+
+def get_settings(config):
+    settings = {}
+    for field_name, field_value in config.__dict__.items():
+        if field_name.isupper():
+            settings[field_name] = field_value
+    return settings
+
+
+def load_json_from_file(json_file_location):
+    with open(json_file_location, "r") as file:
+        return json.load(file)

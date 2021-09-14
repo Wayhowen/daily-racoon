@@ -1,3 +1,1 @@
-class Builder:
-    def __init__(self):
-        pass
+from .builder import Builder
