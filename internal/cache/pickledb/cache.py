@@ -18,6 +18,7 @@ class Cache:
         return self._last_picture_timestamp
 
     def save_database(self) -> None:
+        self._db.set("last_timestamp", self._last_picture_timestamp)
         self._db.dump()
 
     def add_raccoon_pictures(self, racoon_pictures: list[Picture]) -> None:

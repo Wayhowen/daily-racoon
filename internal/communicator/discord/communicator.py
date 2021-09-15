@@ -31,12 +31,9 @@ class Communicator(commands.Bot):
         message = ("start", f"{self.user} connected to {self.guilds[0]}")
         print(message)
         while True:
-            if not self._output_queue.empty():
-                message_info = await self._output_queue.get()
-                channel, message = message_info
-                await self.write_to_channel(channel, message)
-            else:
-                await asyncio.sleep(1)
+            message_info = await self._output_queue.get()
+            channel, message = message_info
+            await self.write_to_channel(channel, message)
 
     async def on_message(self, message: Message):
         if message.channel.name in self._work_on_channels and message.author != self.user\

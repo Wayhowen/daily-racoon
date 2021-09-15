@@ -1,4 +1,5 @@
 import asyncio
+import signal
 from typing import Optional
 
 import janus
@@ -16,6 +17,10 @@ class Core:
 
         self._local_queue: Optional[janus.Queue] = None
 
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    # TODO: divide work into input and output streams
     async def run(self):
         self._local_queue = janus.Queue()
         while True:
@@ -39,5 +44,9 @@ class Core:
         raccoon_picture = self._cache.get_racoon_picture()
         if raccoon_picture:
             return raccoon_picture.url
-        self._cache.add_raccoon_pictures(self._scraper.download_raccoon_pictures())
+        self._cache.add_raccoon_pictures(self._scraper.download_raccoon_pictures(
+            before=self._cache.last_picture_timestamp))
         return self._cache.get_racoon_picture().url
+
+    def exit_gracefully(self, *args, **kwargs):
+        self._cache.save_database()

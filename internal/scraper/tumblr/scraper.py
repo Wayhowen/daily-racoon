@@ -19,9 +19,10 @@ class Scraper:
             oauth_secret
         )
 
-    def download_raccoon_pictures(self):
+    def download_raccoon_pictures(self, before=None):
         pictures = []
-        data = self._tumblr_client.posts('dailyraccoons.tumblr.com', limit=50, type="photo")
+        data = self._tumblr_client.posts('dailyraccoons.tumblr.com', limit=50, type="photo",
+                                         before=before)
         for post in data["posts"]:
             raccoon_picture = self._extract_racoon_picture(post)
             if raccoon_picture:
