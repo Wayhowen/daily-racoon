@@ -1,6 +1,6 @@
 import sys
 
-from pkg.utils import get_settings, load_json_from_file
+from pkg.utils import get_settings, load_json_from_file, load_json_from_env
 
 
 class Builder:
@@ -11,7 +11,10 @@ class Builder:
         if "COMMUNICATOR" in self._settings:
             if self._settings["COMMUNICATOR"] == "discord":
                 from internal.communicator.discord import Communicator as DiscordCommunicator
-                discord_secrets = load_json_from_file(self._settings["DISCORD_KEYS_LOCATION"])
+                try:
+                    discord_secrets = load_json_from_file(self._settings["DISCORD_KEYS_LOCATION"])
+                except FileNotFoundError:
+                    discord_secrets = load_json_from_env(self._settings["DISCORD_ENV"])
                 communicator = DiscordCommunicator(self._settings["DISCORD_COMMAND_PREFIX"],
                                                    self._settings["DISCORD_CHANNELS_MAP"],
                                                    self._settings["DISCORD_WORK_ON_CHANNELS"],
@@ -22,7 +25,10 @@ class Builder:
         if "SCRAPER" in self._settings:
             if self._settings["SCRAPER"] == "tumblr":
                 from internal.scraper.tumblr import Scraper as TumblrScraper
-                tumblr_secrets = load_json_from_file(self._settings["TUMBLR_KEYS_LOCATION"])
+                try:
+                    tumblr_secrets = load_json_from_file(self._settings["TUMBLR_KEYS_LOCATION"])
+                except FileNotFoundError:
+                    tumblr_secrets = load_json_from_env(self._settings["TUMBLR_ENV"])
                 scraper = TumblrScraper(tumblr_secrets["OAuthConsumerKey"],
                                         tumblr_secrets["SecretKey"], tumblr_secrets["OAuthToken"],
                                         tumblr_secrets["OAuthSecret"])

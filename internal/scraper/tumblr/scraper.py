@@ -2,7 +2,7 @@ import re
 
 import pytumblr as pytumblr
 
-from dto.picture import Picture
+from internal.dto.picture import Picture
 
 
 class Scraper:

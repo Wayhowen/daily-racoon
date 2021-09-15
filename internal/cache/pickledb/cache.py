@@ -1,6 +1,6 @@
 import pickledb
 
-from dto.picture import Picture
+from internal.dto.picture import Picture
 
 
 # TODO: make use of pickledb
