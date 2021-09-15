@@ -2,3 +2,4 @@ tumblr_secret.json
 discord_secret.json
 .idea
 *.pyc
+.pickleDB
