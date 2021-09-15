@@ -1,4 +1,7 @@
 import asyncio
+from typing import Optional
+
+import janus
 
 
 class Core:
@@ -11,25 +14,26 @@ class Core:
         self._input = communicator.get_input_queue()
         self._output = communicator.get_output_queue()
 
-    async def run(self):
-        while True:
-            print("waiting on input")
-            if self._input:
-                task_data = self._input.get()
-                print("got input")
-                self._process_input(task_data)
-                print("processed")
-            else:
-                print("sleeping")
-                await asyncio.sleep(1)
+        self._local_queue: Optional[janus.Queue] = None
 
-    def _process_input(self, task_data):
+    async def run(self):
+        self._local_queue = janus.Queue()
+        while True:
+            asyncio.run_coroutine_threadsafe(self.get_input(), self._communicator.loop)
+            task_data = await self._local_queue.async_q.get()
+            await self._process_input(task_data)
+
+    async def get_input(self):
+        self._local_queue.sync_q.put(await self._input.get())
+
+    async def _process_input(self, task_data):
         channel, task, *_ = task_data
         if task == "szopiki":
             response = self._process_szopiki()
-            self._output.put((channel, response))
+            await self._output.put((channel, response))
         else:
-            self._output.put((channel, "Unrecognized command"))
+            await self._output.put((channel, "Unrecognized command"))
+        self._task_data = None
 
     def _process_szopiki(self):
         raccoon_picture = self._cache.get_racoon_picture()

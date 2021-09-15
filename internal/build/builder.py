@@ -23,12 +23,9 @@ class Builder:
             if self._settings["SCRAPER"] == "tumblr":
                 from internal.scraper.tumblr import Scraper as TumblrScraper
                 tumblr_secrets = load_json_from_file(self._settings["TUMBLR_KEYS_LOCATION"])
-                oauth_consumer_key = tumblr_secrets["OAuthConsumerKey"]
-                secret_key = tumblr_secrets["SecretKey"]
-                oauth_token = tumblr_secrets["OAuthToken"]
-                oauth_secret = tumblr_secrets["OAuthSecret"]
-                scraper = TumblrScraper(oauth_consumer_key, secret_key, oauth_token,
-                                        oauth_secret)
+                scraper = TumblrScraper(tumblr_secrets["OAuthConsumerKey"],
+                                        tumblr_secrets["SecretKey"], tumblr_secrets["OAuthToken"],
+                                        tumblr_secrets["OAuthSecret"])
 
         if "CACHE" in self._settings:
             if self._settings["CACHE"] == "pickledb":

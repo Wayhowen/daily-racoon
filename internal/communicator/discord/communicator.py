@@ -13,13 +13,13 @@ class Communicator(commands.Bot):
         self._channels_map = channels_map
         self._work_on_channels = work_on_channels
 
-        self._input_queue = Queue()
-        self._output_queue = Queue()
+        self._input_queue = asyncio.Queue()
+        self._output_queue = asyncio.Queue()
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.start(bot_token))
+        self.loop = asyncio.get_event_loop()
+        self.loop.create_task(self.start(bot_token))
         self._bot_thread = Thread(
-            target=loop.run_forever, name='bot-thread', daemon=True).start()
+            target=self.loop.run_forever, name='bot-thread', daemon=True).start()
 
     def get_input_queue(self) -> Queue:
         return self._input_queue
@@ -29,13 +29,13 @@ class Communicator(commands.Bot):
 
     async def on_ready(self):
         message = ("start", f"{self.user} connected to {self.guilds[0]}")
+        print(message)
         while True:
             if not self._output_queue.empty():
-                message_info = self._output_queue.get()
+                message_info = await self._output_queue.get()
                 channel, message = message_info
                 await self.write_to_channel(channel, message)
             else:
-                print("sleeping rdy")
                 await asyncio.sleep(1)
 
     async def on_message(self, message: Message):
@@ -43,7 +43,7 @@ class Communicator(commands.Bot):
                 and message.content.startswith("!"):
             message_content = message.content[1:]
             message_data = (message.channel.name, *message_content.split())
-            self._input_queue.put(message_data)
+            await self._input_queue.put(message_data)
 
     async def write_to_channel(self, channel_name: str, message: str):
         await self.wait_until_ready()
