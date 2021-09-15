@@ -1,7 +1,7 @@
 import asyncio
 
-from build import Builder
-from configs import default
+from internal.build import Builder
+from internal.configs import default
 
 
 if __name__ == "__main__":
