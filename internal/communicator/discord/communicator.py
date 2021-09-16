@@ -27,7 +27,7 @@ class Communicator(commands.Bot):
     def get_output_queue(self) -> Queue:
         return self._output_queue
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         message = ("start", f"{self.user} connected to {self.guilds[0]}")
         print(message)
         while True:
@@ -35,20 +35,20 @@ class Communicator(commands.Bot):
             channel, message = message_info
             await self.write_to_channel(channel, message)
 
-    async def on_message(self, message: Message):
+    async def on_message(self, message: Message) -> None:
         if message.channel.name in self._work_on_channels and message.author != self.user\
                 and message.content.startswith("!"):
             message_content = message.content[1:]
             message_data = (message.channel.name, *message_content.split())
             await self._input_queue.put(message_data)
 
-    async def write_to_channel(self, channel_name: str, message: str):
+    async def write_to_channel(self, channel_name: str, message: str) -> None:
         await self.wait_until_ready()
         channel = self.get_channel(id=self._channels_map[channel_name])
         await channel.send(message)
 
     # TODO: add proper logging
-    async def on_error(self, event, *args, **kwargs):
+    async def on_error(self, event, *args, **kwargs) -> None:
         error_message = f"During execution of an '{event}', the following happened : {args[0]}\n " \
                 f"Traceback: {sys.exc_info()}"
         message = ("error", error_message)

@@ -16,5 +16,9 @@ def load_json_from_file(json_file_location):
         return json.load(file)
 
 
-def load_json_from_env(env_name):
-    return json.loads(base64.b64decode(os.getenv(env_name)))
+def load_json_from_env(env_name: str):
+    return json.loads(os.getenv(env_name))
+
+
+def decode_base64(encoded_string: str):
+    return base64.b64decode(encoded_string)

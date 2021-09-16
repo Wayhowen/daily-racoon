@@ -1,15 +1,15 @@
 from typing import Optional
 
-import pickledb
+import redis
 
 from internal.dto.picture import Picture
 
 
+# TODO: make use of pickledb
 # TODO: add some logic not to run out of pictures
-# TODO: make it independent of raccoon thing
 class Cache:
     def __init__(self, database_location: str):
-        self._db = pickledb.load(database_location, False)
+        self._redis = redis.Redis(database_location, False)
 
         self._last_picture_timestamp = self._db.get("last_timestamp") or None
 

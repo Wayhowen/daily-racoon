@@ -21,17 +21,17 @@ class Core:
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
     # TODO: divide work into input and output streams
-    async def run(self):
+    async def run(self) -> None:
         self._local_queue = janus.Queue()
         while True:
             asyncio.run_coroutine_threadsafe(self.get_input(), self._communicator.loop)
             task_data = await self._local_queue.async_q.get()
             await self._process_input(task_data)
 
-    async def get_input(self):
+    async def get_input(self) -> None:
         self._local_queue.sync_q.put(await self._input.get())
 
-    async def _process_input(self, task_data):
+    async def _process_input(self, task_data: tuple) -> None:
         channel, task, *_ = task_data
         if task == "szopiki":
             response = self._process_szopiki()
@@ -40,7 +40,7 @@ class Core:
             await self._output.put((channel, "Unrecognized command"))
         self._task_data = None
 
-    def _process_szopiki(self):
+    def _process_szopiki(self) -> str:
         raccoon_picture = self._cache.get_racoon_picture()
         if raccoon_picture:
             return raccoon_picture.url
@@ -48,5 +48,5 @@ class Core:
             before=self._cache.last_picture_timestamp))
         return self._cache.get_racoon_picture().url
 
-    def exit_gracefully(self, *args, **kwargs):
+    def exit_gracefully(self, *args, **kwargs) -> None:
         self._cache.save_database()
