@@ -16,8 +16,8 @@ def load_json_from_file(json_file_location) -> dict:
         return json.load(file)
 
 
-def load_json_from_env(env_name: str) -> dict:
-    return json.loads(os.getenv(env_name))
+def string_to_dict(string: str) -> dict:
+    return json.loads(string)
 
 
 def load_from_env(env_name: str) -> str:
